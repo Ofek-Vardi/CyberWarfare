@@ -27,7 +27,7 @@ The program will automatically download all required dependencies upon first int
     - hydra
     - python3
 
-## Disclaimer:
+## Disclaimer
 - All functionalities are executed anonymously using [Nipe](https://github.com/htrgouvea/nipe).
 - The initial targets list is created using IP ranges from the [NirSoft](https://www.nirsoft.net/countryip/ir.html) website.
 
