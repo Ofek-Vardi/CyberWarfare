@@ -95,19 +95,19 @@ function defaultFiles()
 	echo "smtp" >> .services.lst
 	echo "irc" >> .services.lst
 	fi
-	
+
 	# Default usernames list
 	if [ ! -f .usr.lst ]
 	then
 		echo -e "Admin\nadmin\nAdministrator\nadministrator\nroot\nguest\nusername\ndemo\nuser1\nIEUser\nmsfadmin" > .usr.lst
 	fi
-	
+
 	# Default passwords list
 	if [ ! -f .pass.lst ]
 	then
 		echo -e "p@ssword\nPassw0rd!\ntoor\npassword\nadmin\nadministrator\nst@rt123\n123456\n1234567890\n123456aA\nmsfadmin" > .pass.lst
 	fi
-	
+
 	# Default bash dependencies list
 	echo "nmap" > .bashDependencies.lst
 	echo "dos2unix" >> .bashDependencies.lst
@@ -118,10 +118,10 @@ function defaultFiles()
 	echo "nohup" >> .bashDependencies.lst
 	echo "jq" >> .bashDependencies.lst
 	echo "python3" >> .bashDependencies.lst
-	
+
 	# Default git dependencies list
 	echo "nipe.pl|.initNipe.sh" > .gitDependencies.lst
-	
+
 	# Create init file for - nipe
 	if [ ! -f .initNipe.sh ]
 	then
@@ -130,14 +130,14 @@ function defaultFiles()
 		echo "perl nipe.pl install" >> .initNipe.sh
 		chmod 777 .initNipe.sh
 	fi
-	
+
 	# Set default settings
 	# Default settings can be changed in the 'displaySettings()' function
 	if [ ! -f .settings.json ]
 	then
 		resetSettings
 	fi
-	
+
 	# Create sensitive IPs bank
 	if [ ! -f .sensitive.lst ]
 	then
@@ -145,6 +145,14 @@ function defaultFiles()
 		sensitiveIps="104.200.128.126,104.200.128.161,104.200.128.173,104.200.128.183,104.200.128.184,104.200.128.185,104.200.128.187,104.200.128.195,104.200.128.196,104.200.128.198,104.200.128.205,104.200.128.206,104.200.128.208,104.200.128.209,104.200.128.48,104.200.128.58,104.200.128.64,104.200.128.71,107.181.160.138,107.181.160.178,107.181.160.179,107.181.160.194,107.181.160.195,107.181.161.141,107.181.174.21,107.181.174.232,107.181.174.241,141.105.70.235,141.105.70.236,141.105.70.237,141.105.70.238,141.105.70.239,141.105.70.240,141.105.70.241,141.105.70.242,141.105.70.243,141.105.70.244,141.105.70.245,141.105.70.246,141.105.70.247,141.105.70.248,141.105.70.249,141.105.70.250,144.168.45.126,146.0.73.107,146.0.73.108,146.0.73.109,146.0.73.110,146.0.73.111,146.0.73.112,146.0.73.113,146.0.73.114,173.244.173.10,173.244.173.11,173.244.173.12,173.244.173.13,173.244.173.14,206.221.181.253,209.51.199.112,209.51.199.113,209.51.199.114,209.51.199.115,209.51.199.116,209.51.199.117,209.51.199.118,31.192.105.15,31.192.105.16,31.192.105.17,38.130.75.20,66.55.152.164,68.232.180.122,91.218.247.157,91.218.247.158,91.218.247.160,91.218.247.161,91.218.247.162,91.218.247.165,91.218.247.166,91.218.247.167,91.218.247.168,91.218.247.169,91.218.247.170,91.218.247.173,91.218.247.180,91.218.247.181,91.218.247.182,91.218.247.183"
 		echo "$sensitiveIps" | awk -F ',' '{for(i=1;i<=NF;i++) print $i}' > .sensitive.lst
 	fi
+
+	# Create empty logs
+	if [ ! -d logs ]
+	then
+		mkdir logs
+	fi
+	# Add log files
+	clearLogs
 }
 
 function initStatus()
@@ -162,7 +170,7 @@ function checkDependencies()
 {
 	# Make sure all init files exist
 	defaultFiles
-	
+
 	# Verify all bash packages used
 	updated=0
 	initStatus
@@ -183,7 +191,7 @@ function checkDependencies()
 			echo "$package was installed"
 		fi
 	done
-	
+
 	# Verify all git packages used
 	for gitp in $(cat .gitDependencies.lst)
 	do
@@ -203,12 +211,12 @@ function checkDependencies()
 			then
 				jq '.nipe = $x' --arg x $ppath .settings.json > tmp.$$.json && mv tmp.$$.json .settings.json
 			fi
-			
+
 		fi
 	done
-	
+
 	# The next 2 sections of this function are executed here instead of inside the 'defaultFiles()' function
-	# This is because they require the use of dos2uni and thus need to be executed only after verifying all dependencies
+	# This is because they require the use of dos2unix and thus need to be executed only after verifying all dependencies
 	# Create a targets list from the NirSoft table, if it doesn't exist already
 	if [ ! -f irTargets.lst ]
 	then
@@ -222,7 +230,7 @@ function checkDependencies()
 		echo "Creating targets list..."
 		ipList
 	fi
-	
+
 	# Clear stdout color (Was changed inside the function initStatus)
 	printf "${clear}"
 	# Grant current user RWX permissions for all files
@@ -536,7 +544,7 @@ function procMenu()
 		echo "9. Back"
 		echo
 		printf "> Choose an action: ${clear}"
-		
+
 		# Refresh the menu, which contains data about the running instances of a certain module, every 0.25 seconds
 		read -t 0.25 -sn1 action
 		case $action in
@@ -578,7 +586,7 @@ function subMenu1()
 		echo "9. Back"
 		echo
 		printf "> Choose an action: ${clear}"
-		
+
 		# Wait for a valid user action
 		read -sn1 action
 		# Display action menu for each module respectively
@@ -640,7 +648,7 @@ function menu()
 			# Remove temp files related to BF speed calculation when the BF module isn't running
 			rm -f .hydra.res .bftime
 		fi
-		
+
 		# Interface
 		clear
 		logo=$(figlet CYBER WARFARE -f block -t)
@@ -675,7 +683,7 @@ function menu()
 			echo
 		fi
 		printf "> Choose an action: ${clear}"
-		
+
 		# Wait for user action, timeout every 0.25 seconds (In order to update the interface, which contains bf and scan data in real time)
 		read -t 0.25 -sn1 action
 		case $action in
