@@ -184,7 +184,7 @@ function checkDependencies()
 			if [ $updated -eq 0 ]
 			then
 				apt-get update --fix-missing 1>/dev/null
-				apt-et install -f
+				apt-get install -f
 				updated=1
 			fi
 			apt-get --yes --force-yes install -f $package 1>/dev/null
